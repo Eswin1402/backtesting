@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Galería - Backtesting Global</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+<style>
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    height: 100%;
+    background: #111;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+#contenedor {
+    position: absolute;
+    inset: 0;
+    background: white;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+#contador {
+    position: fixed;
+    top: 20px;
+    left: 16px;
+    z-index: 20;
+    background: rgba(17,17,17,.6);
+    color: #ddd;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+
+#flecha-izq, #flecha-der {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,.25);
+    color: white;
+    border: none;
+    font-size: 28px;
+    width: 48px;
+    height: 76px;
+    cursor: pointer;
+    z-index: 15;
+    opacity: 0;
+    transition: opacity .15s, background .15s;
+}
+
+#flecha-izq { left: 0; border-radius: 0 10px 10px 0; }
+#flecha-der { right: 0; border-radius: 10px 0 0 10px; }
+
+#flecha-izq:hover, #flecha-der:hover {
+    opacity: 1;
+    background: rgba(0,0,0,.5);
+}
+
+</style>
+</head>
+<body>
+
+<div id="contador"></div>
+
+<button id="flecha-izq" onclick="anterior()">‹</button>
+<button id="flecha-der" onclick="siguiente()">›</button>
+
+<div id="contenedor">
+    <iframe id="visor-iframe"></iframe>
+</div>
+
+<script>
+
+const GALERIA = [{"ruta": "01_mensual/mensual_fob_tradicional_2021.html", "titulo": "Backtesting Global -- FOB -- Tradicional -- 2021", "categoria": "Mensual por año"}, {"ruta": "01_mensual/mensual_fob_tradicional_2022.html", "titulo": "Backtesting Global -- FOB -- Tradicional -- 2022", "categoria": "Mensual por año"}, {"ruta": "01_mensual/mensual_fob_tradicional_2023.html", "titulo": "Backtesting Global -- FOB -- Tradicional -- 2023", "categoria": "Mensual por año"}, {"ruta": "01_mensual/mensual_fob_tradicional_2024.html", "titulo": "Backtesting Global -- FOB -- Tradicional -- 2024", "categoria": "Mensual por año"}, {"ruta": "01_mensual/mensual_fob_tradicional_2025.html", "titulo": "Backtesting Global -- FOB -- Tradicional -- 2025", "categoria": "Mensual por año"}, {"ruta": "02_anual/anual_fob_tradicional.html", "titulo": "Backtesting Global -- FOB -- Tradicional -- Total anual 2021-2025", "categoria": "Anual"}, {"ruta": "01_mensual/mensual_fob_no_tradicional_2021.html", "titulo": "Backtesting Global -- FOB -- No Tradicional -- 2021", "categoria": "Mensual por año"}, {"ruta": "01_mensual/mensual_fob_no_tradicional_2022.html", "titulo": "Backtesting Global -- FOB -- No Tradicional -- 2022", "categoria": "Mensual por año"}, {"ruta": "01_mensual/mensual_fob_no_tradicional_2023.html", "titulo": "Backtesting Global -- FOB -- No Tradicional -- 2023", "categoria": "Mensual por año"}, {"ruta": "01_mensual/mensual_fob_no_tradicional_2024.html", "titulo": "Backtesting Global -- FOB -- No Tradicional -- 2024", "categoria": "Mensual por año"}, {"ruta": "01_mensual/mensual_fob_no_tradicional_2025.html", "titulo": "Backtesting Global -- FOB -- No Tradicional -- 2025", "categoria": "Mensual por año"}, {"ruta": "02_anual/anual_fob_no_tradicional.html", "titulo": "Backtesting Global -- FOB -- No Tradicional -- Total anual 2021-2025", "categoria": "Anual"}, {"ruta": "01_mensual/mensual_pesoneto_tradicional_2021.html", "titulo": "Backtesting Global -- PesoNeto -- Tradicional -- 2021", "categoria": "Mensual por año"}, {"ruta": "01_mensual/mensual_pesoneto_tradicional_2022.html", "titulo": "Backtesting Global -- PesoNeto -- Tradicional -- 2022", "categoria": "Mensual por año"}, {"ruta": "01_mensual/mensual_pesoneto_tradicional_2023.html", "titulo": "Backtesting Global -- PesoNeto -- Tradicional -- 2023", "categoria": "Mensual por año"}, {"ruta": "01_mensual/mensual_pesoneto_tradicional_2024.html", "titulo": "Backtesting Global -- PesoNeto -- Tradicional -- 2024", "categoria": "Mensual por año"}, {"ruta": "01_mensual/mensual_pesoneto_tradicional_2025.html", "titulo": "Backtesting Global -- PesoNeto -- Tradicional -- 2025", "categoria": "Mensual por año"}, {"ruta": "02_anual/anual_pesoneto_tradicional.html", "titulo": "Backtesting Global -- PesoNeto -- Tradicional -- Total anual 2021-2025", "categoria": "Anual"}, {"ruta": "01_mensual/mensual_pesoneto_no_tradicional_2021.html", "titulo": "Backtesting Global -- PesoNeto -- No Tradicional -- 2021", "categoria": "Mensual por año"}, {"ruta": "01_mensual/mensual_pesoneto_no_tradicional_2022.html", "titulo": "Backtesting Global -- PesoNeto -- No Tradicional -- 2022", "categoria": "Mensual por año"}, {"ruta": "01_mensual/mensual_pesoneto_no_tradicional_2023.html", "titulo": "Backtesting Global -- PesoNeto -- No Tradicional -- 2023", "categoria": "Mensual por año"}, {"ruta": "01_mensual/mensual_pesoneto_no_tradicional_2024.html", "titulo": "Backtesting Global -- PesoNeto -- No Tradicional -- 2024", "categoria": "Mensual por año"}, {"ruta": "01_mensual/mensual_pesoneto_no_tradicional_2025.html", "titulo": "Backtesting Global -- PesoNeto -- No Tradicional -- 2025", "categoria": "Mensual por año"}, {"ruta": "02_anual/anual_pesoneto_no_tradicional.html", "titulo": "Backtesting Global -- PesoNeto -- No Tradicional -- Total anual 2021-2025", "categoria": "Anual"}];
+
+function indiceInicial() {
+    const params = new URLSearchParams(window.location.search);
+    let i = parseInt(params.get("i"), 10);
+    if (isNaN(i) || i < 0 || i >= GALERIA.length) {
+        i = 0;
+    }
+    return i;
+}
+
+let indiceActual = indiceInicial();
+
+function mostrar(i) {
+
+    indiceActual = ((i % GALERIA.length) + GALERIA.length) % GALERIA.length;
+
+    const item = GALERIA[indiceActual];
+
+    document.getElementById("visor-iframe").src = item.ruta;
+    document.title = item.categoria + " — " + item.titulo;
+    document.getElementById("contador").textContent =
+        (indiceActual + 1) + " / " + GALERIA.length;
+
+    const nuevaUrl = window.location.pathname + "?i=" + indiceActual;
+    history.replaceState(null, "", nuevaUrl);
+}
+
+function anterior() {
+    mostrar(indiceActual - 1);
+}
+
+function siguiente() {
+    mostrar(indiceActual + 1);
+}
+
+function cerrar() {
+    window.location.href = "index.html";
+}
+
+window.addEventListener("message", function (e) {
+    if (e.data && e.data.tipo === "cerrar-visor") {
+        cerrar();
+    }
+});
+
+document.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowLeft") anterior();
+    if (e.key === "ArrowRight") siguiente();
+    if (e.key === "Escape") cerrar();
+});
+
+let touchStartX = null;
+
+document.addEventListener("touchstart", function (e) {
+    touchStartX = e.touches[0].clientX;
+}, { passive: true });
+
+document.addEventListener("touchend", function (e) {
+    if (touchStartX === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) {
+        if (dx > 0) anterior();
+        else siguiente();
+    }
+    touchStartX = null;
+}, { passive: true });
+
+mostrar(indiceActual);
+
+</script>
+
+</body>
+</html>

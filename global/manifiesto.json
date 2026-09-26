@@ -1,0 +1,122 @@
+[
+  {
+    "ruta": "01_mensual/mensual_fob_tradicional_2021.html",
+    "titulo": "Backtesting Global -- FOB -- Tradicional -- 2021",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_tradicional_2022.html",
+    "titulo": "Backtesting Global -- FOB -- Tradicional -- 2022",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_tradicional_2023.html",
+    "titulo": "Backtesting Global -- FOB -- Tradicional -- 2023",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_tradicional_2024.html",
+    "titulo": "Backtesting Global -- FOB -- Tradicional -- 2024",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_tradicional_2025.html",
+    "titulo": "Backtesting Global -- FOB -- Tradicional -- 2025",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "02_anual/anual_fob_tradicional.html",
+    "titulo": "Backtesting Global -- FOB -- Tradicional -- Total anual 2021-2025",
+    "categoria": "Anual"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_no_tradicional_2021.html",
+    "titulo": "Backtesting Global -- FOB -- No Tradicional -- 2021",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_no_tradicional_2022.html",
+    "titulo": "Backtesting Global -- FOB -- No Tradicional -- 2022",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_no_tradicional_2023.html",
+    "titulo": "Backtesting Global -- FOB -- No Tradicional -- 2023",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_no_tradicional_2024.html",
+    "titulo": "Backtesting Global -- FOB -- No Tradicional -- 2024",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_no_tradicional_2025.html",
+    "titulo": "Backtesting Global -- FOB -- No Tradicional -- 2025",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "02_anual/anual_fob_no_tradicional.html",
+    "titulo": "Backtesting Global -- FOB -- No Tradicional -- Total anual 2021-2025",
+    "categoria": "Anual"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_tradicional_2021.html",
+    "titulo": "Backtesting Global -- PesoNeto -- Tradicional -- 2021",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_tradicional_2022.html",
+    "titulo": "Backtesting Global -- PesoNeto -- Tradicional -- 2022",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_tradicional_2023.html",
+    "titulo": "Backtesting Global -- PesoNeto -- Tradicional -- 2023",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_tradicional_2024.html",
+    "titulo": "Backtesting Global -- PesoNeto -- Tradicional -- 2024",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_tradicional_2025.html",
+    "titulo": "Backtesting Global -- PesoNeto -- Tradicional -- 2025",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "02_anual/anual_pesoneto_tradicional.html",
+    "titulo": "Backtesting Global -- PesoNeto -- Tradicional -- Total anual 2021-2025",
+    "categoria": "Anual"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_no_tradicional_2021.html",
+    "titulo": "Backtesting Global -- PesoNeto -- No Tradicional -- 2021",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_no_tradicional_2022.html",
+    "titulo": "Backtesting Global -- PesoNeto -- No Tradicional -- 2022",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_no_tradicional_2023.html",
+    "titulo": "Backtesting Global -- PesoNeto -- No Tradicional -- 2023",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_no_tradicional_2024.html",
+    "titulo": "Backtesting Global -- PesoNeto -- No Tradicional -- 2024",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_no_tradicional_2025.html",
+    "titulo": "Backtesting Global -- PesoNeto -- No Tradicional -- 2025",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "02_anual/anual_pesoneto_no_tradicional.html",
+    "titulo": "Backtesting Global -- PesoNeto -- No Tradicional -- Total anual 2021-2025",
+    "categoria": "Anual"
+  }
+]
