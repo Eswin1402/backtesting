@@ -1,0 +1,322 @@
+[
+  {
+    "ruta": "01_mensual/mensual_fob_tradicional_2021.html",
+    "titulo": "RNN -- FOB -- Tradicional -- 2021",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_tradicional_2022.html",
+    "titulo": "RNN -- FOB -- Tradicional -- 2022",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_tradicional_2023.html",
+    "titulo": "RNN -- FOB -- Tradicional -- 2023",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_tradicional_2024.html",
+    "titulo": "RNN -- FOB -- Tradicional -- 2024",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_tradicional_2025.html",
+    "titulo": "RNN -- FOB -- Tradicional -- 2025",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "03_top5/top5_pais_fob_tradicional_2021.html",
+    "titulo": "RNN -- FOB -- Tradicional -- Top 5 países -- 2021",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_pais_fob_tradicional_2022.html",
+    "titulo": "RNN -- FOB -- Tradicional -- Top 5 países -- 2022",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_pais_fob_tradicional_2023.html",
+    "titulo": "RNN -- FOB -- Tradicional -- Top 5 países -- 2023",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_pais_fob_tradicional_2024.html",
+    "titulo": "RNN -- FOB -- Tradicional -- Top 5 países -- 2024",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_pais_fob_tradicional_2025.html",
+    "titulo": "RNN -- FOB -- Tradicional -- Top 5 países -- 2025",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_fob_tradicional_2021.html",
+    "titulo": "RNN -- FOB -- Tradicional -- Top 5 departamentos -- 2021",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_fob_tradicional_2022.html",
+    "titulo": "RNN -- FOB -- Tradicional -- Top 5 departamentos -- 2022",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_fob_tradicional_2023.html",
+    "titulo": "RNN -- FOB -- Tradicional -- Top 5 departamentos -- 2023",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_fob_tradicional_2024.html",
+    "titulo": "RNN -- FOB -- Tradicional -- Top 5 departamentos -- 2024",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_fob_tradicional_2025.html",
+    "titulo": "RNN -- FOB -- Tradicional -- Top 5 departamentos -- 2025",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_no_tradicional_2021.html",
+    "titulo": "RNN -- FOB -- No Tradicional -- 2021",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_no_tradicional_2022.html",
+    "titulo": "RNN -- FOB -- No Tradicional -- 2022",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_no_tradicional_2023.html",
+    "titulo": "RNN -- FOB -- No Tradicional -- 2023",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_no_tradicional_2024.html",
+    "titulo": "RNN -- FOB -- No Tradicional -- 2024",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_fob_no_tradicional_2025.html",
+    "titulo": "RNN -- FOB -- No Tradicional -- 2025",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "03_top5/top5_pais_fob_no_tradicional_2021.html",
+    "titulo": "RNN -- FOB -- No Tradicional -- Top 5 países -- 2021",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_pais_fob_no_tradicional_2022.html",
+    "titulo": "RNN -- FOB -- No Tradicional -- Top 5 países -- 2022",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_pais_fob_no_tradicional_2023.html",
+    "titulo": "RNN -- FOB -- No Tradicional -- Top 5 países -- 2023",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_pais_fob_no_tradicional_2024.html",
+    "titulo": "RNN -- FOB -- No Tradicional -- Top 5 países -- 2024",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_pais_fob_no_tradicional_2025.html",
+    "titulo": "RNN -- FOB -- No Tradicional -- Top 5 países -- 2025",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_fob_no_tradicional_2021.html",
+    "titulo": "RNN -- FOB -- No Tradicional -- Top 5 departamentos -- 2021",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_fob_no_tradicional_2022.html",
+    "titulo": "RNN -- FOB -- No Tradicional -- Top 5 departamentos -- 2022",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_fob_no_tradicional_2023.html",
+    "titulo": "RNN -- FOB -- No Tradicional -- Top 5 departamentos -- 2023",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_fob_no_tradicional_2024.html",
+    "titulo": "RNN -- FOB -- No Tradicional -- Top 5 departamentos -- 2024",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_fob_no_tradicional_2025.html",
+    "titulo": "RNN -- FOB -- No Tradicional -- Top 5 departamentos -- 2025",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "02_anual_apilado_fob.html",
+    "titulo": "RNN -- FOB -- Real vs Predicho por año",
+    "categoria": "Anual apilado"
+  },
+  {
+    "ruta": "05_anual_final_fob.html",
+    "titulo": "RNN -- FOB -- Total anual (Tradicional + No Tradicional) 2021-2025",
+    "categoria": "Anual final"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_tradicional_2021.html",
+    "titulo": "RNN -- PesoNeto -- Tradicional -- 2021",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_tradicional_2022.html",
+    "titulo": "RNN -- PesoNeto -- Tradicional -- 2022",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_tradicional_2023.html",
+    "titulo": "RNN -- PesoNeto -- Tradicional -- 2023",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_tradicional_2024.html",
+    "titulo": "RNN -- PesoNeto -- Tradicional -- 2024",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_tradicional_2025.html",
+    "titulo": "RNN -- PesoNeto -- Tradicional -- 2025",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "03_top5/top5_pais_pesoneto_tradicional_2021.html",
+    "titulo": "RNN -- PesoNeto -- Tradicional -- Top 5 países -- 2021",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_pais_pesoneto_tradicional_2022.html",
+    "titulo": "RNN -- PesoNeto -- Tradicional -- Top 5 países -- 2022",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_pais_pesoneto_tradicional_2023.html",
+    "titulo": "RNN -- PesoNeto -- Tradicional -- Top 5 países -- 2023",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_pais_pesoneto_tradicional_2024.html",
+    "titulo": "RNN -- PesoNeto -- Tradicional -- Top 5 países -- 2024",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_pais_pesoneto_tradicional_2025.html",
+    "titulo": "RNN -- PesoNeto -- Tradicional -- Top 5 países -- 2025",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_pesoneto_tradicional_2021.html",
+    "titulo": "RNN -- PesoNeto -- Tradicional -- Top 5 departamentos -- 2021",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_pesoneto_tradicional_2022.html",
+    "titulo": "RNN -- PesoNeto -- Tradicional -- Top 5 departamentos -- 2022",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_pesoneto_tradicional_2023.html",
+    "titulo": "RNN -- PesoNeto -- Tradicional -- Top 5 departamentos -- 2023",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_pesoneto_tradicional_2024.html",
+    "titulo": "RNN -- PesoNeto -- Tradicional -- Top 5 departamentos -- 2024",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_pesoneto_tradicional_2025.html",
+    "titulo": "RNN -- PesoNeto -- Tradicional -- Top 5 departamentos -- 2025",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_no_tradicional_2021.html",
+    "titulo": "RNN -- PesoNeto -- No Tradicional -- 2021",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_no_tradicional_2022.html",
+    "titulo": "RNN -- PesoNeto -- No Tradicional -- 2022",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_no_tradicional_2023.html",
+    "titulo": "RNN -- PesoNeto -- No Tradicional -- 2023",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_no_tradicional_2024.html",
+    "titulo": "RNN -- PesoNeto -- No Tradicional -- 2024",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "01_mensual/mensual_pesoneto_no_tradicional_2025.html",
+    "titulo": "RNN -- PesoNeto -- No Tradicional -- 2025",
+    "categoria": "Mensual por año"
+  },
+  {
+    "ruta": "03_top5/top5_pais_pesoneto_no_tradicional_2021.html",
+    "titulo": "RNN -- PesoNeto -- No Tradicional -- Top 5 países -- 2021",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_pais_pesoneto_no_tradicional_2022.html",
+    "titulo": "RNN -- PesoNeto -- No Tradicional -- Top 5 países -- 2022",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_pais_pesoneto_no_tradicional_2023.html",
+    "titulo": "RNN -- PesoNeto -- No Tradicional -- Top 5 países -- 2023",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_pais_pesoneto_no_tradicional_2024.html",
+    "titulo": "RNN -- PesoNeto -- No Tradicional -- Top 5 países -- 2024",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_pais_pesoneto_no_tradicional_2025.html",
+    "titulo": "RNN -- PesoNeto -- No Tradicional -- Top 5 países -- 2025",
+    "categoria": "Top 5 países"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_pesoneto_no_tradicional_2021.html",
+    "titulo": "RNN -- PesoNeto -- No Tradicional -- Top 5 departamentos -- 2021",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_pesoneto_no_tradicional_2022.html",
+    "titulo": "RNN -- PesoNeto -- No Tradicional -- Top 5 departamentos -- 2022",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_pesoneto_no_tradicional_2023.html",
+    "titulo": "RNN -- PesoNeto -- No Tradicional -- Top 5 departamentos -- 2023",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_pesoneto_no_tradicional_2024.html",
+    "titulo": "RNN -- PesoNeto -- No Tradicional -- Top 5 departamentos -- 2024",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "03_top5/top5_departamento_pesoneto_no_tradicional_2025.html",
+    "titulo": "RNN -- PesoNeto -- No Tradicional -- Top 5 departamentos -- 2025",
+    "categoria": "Top 5 departamentos"
+  },
+  {
+    "ruta": "02_anual_apilado_pesoneto.html",
+    "titulo": "RNN -- PesoNeto -- Real vs Predicho por año",
+    "categoria": "Anual apilado"
+  },
+  {
+    "ruta": "05_anual_final_pesoneto.html",
+    "titulo": "RNN -- PesoNeto -- Total anual (Tradicional + No Tradicional) 2021-2025",
+    "categoria": "Anual final"
+  }
+]
