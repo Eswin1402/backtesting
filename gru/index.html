@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Backtesting GRU - Exportaciones Peruanas</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+<style>
+  :root{
+    --yellow:#f4b731;
+    --yellow-soft:#fdf1d2;
+    --ink:#171717;
+    --gray:#6b7280;
+    --line:#eceff1;
+    --dl-bg:#eef0f2;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  html,body{margin:0;min-height:100%;}
+  body{
+    font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;
+    background:#fff;color:var(--ink);overflow-x:hidden;position:relative;
+  }
+  .deco{position:absolute;pointer-events:none;z-index:0;}
+  .deco-tr-ring{top:-90px;right:-90px;width:200px;height:200px;border-radius:50%;border:2px solid var(--ink);}
+  .deco-tr-fill{top:-40px;right:-40px;width:120px;height:120px;border-radius:50%;background:var(--yellow);}
+  .deco-bl-fill{bottom:-100px;left:-100px;width:220px;height:220px;border-radius:50%;background:var(--yellow);}
+  .deco-bl-ring{bottom:-45px;left:-45px;width:160px;height:160px;border-radius:50%;border:2px solid var(--ink);}
+  .dots{position:absolute;bottom:6%;right:5%;display:grid;grid-template-columns:repeat(4,10px);gap:10px;z-index:0;}
+  .dots span{width:6px;height:6px;border-radius:50%;background:var(--yellow);}
+
+  main{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:48px 6vw 90px;}
+
+  .top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:40px;}
+  .eyebrow{display:flex;align-items:center;gap:14px;}
+  .eyebrow .dash{width:34px;height:3px;background:var(--yellow);border-radius:2px;}
+  .eyebrow span{font-size:.78rem;font-weight:700;letter-spacing:.22em;color:var(--ink);}
+
+  .back-link{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);
+    font-size:.85rem;font-weight:700;letter-spacing:.05em;transition:transform .2s ease;}
+  .back-link:hover{transform:translateX(-3px);}
+  .back-link svg{width:16px;height:16px;}
+
+  h1{font-size:clamp(1.8rem,3.6vw,2.6rem);font-weight:800;margin:0 0 12px;letter-spacing:-0.01em;}
+  h1 .accent{color:var(--yellow);}
+  .lead{color:var(--gray);font-size:1.02rem;margin:0 0 34px;}
+
+  /* Resumen destacado (periodo, targets, sectores, botón carrusel) */
+  .resumen{
+    position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:22px;
+    background:var(--dl-bg);border-radius:18px;padding:26px 28px;margin-bottom:44px;
+    opacity:0;transform:translateY(14px);animation:rise .55s ease-out forwards;
+  }
+  .resumen .resumen-texto{flex:1;min-width:260px;}
+  .resumen p{margin:4px 0;font-size:.9rem;color:var(--ink);}
+  .resumen p b{font-weight:700;}
+  .boton-carrusel{
+    display:inline-flex;align-items:center;gap:12px;background:var(--ink);color:#fff;
+    font-weight:700;font-size:.9rem;padding:13px 24px;border-radius:30px;text-decoration:none;
+    transition:transform .2s ease;flex-shrink:0;
+  }
+  .boton-carrusel:hover{transform:translateY(-2px);}
+  .boton-carrusel .flecha{
+    background:var(--yellow);color:var(--ink);border-radius:50%;width:26px;height:26px;
+    display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:800;
+  }
+
+  h2{font-size:1.2rem;font-weight:800;margin:44px 0 20px;letter-spacing:-0.01em;}
+
+  .grid{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;
+  }
+
+  /* card horizontal: icono | texto | botón flecha, todo centrado verticalmente */
+  .card{
+    position:relative;display:flex;align-items:center;gap:18px;
+    background:#fff;border:1px solid var(--line);border-radius:18px;
+    padding:22px;min-height:150px;min-width:0;text-decoration:none;color:var(--ink);
+    opacity:0;transform:translateY(14px);animation:rise .55s ease-out forwards;
+    transition:transform .25s ease,box-shadow .25s ease;
+  }
+  .card:hover{transform:translateY(-5px);box-shadow:0 18px 30px -18px rgba(0,0,0,.28);}
+  .card:nth-child(1){animation-delay:.02s;}
+  .card:nth-child(2){animation-delay:.06s;}
+  .card:nth-child(3){animation-delay:.10s;}
+  .card:nth-child(4){animation-delay:.14s;}
+  .card:nth-child(5){animation-delay:.18s;}
+  .card:nth-child(6){animation-delay:.22s;}
+  .card:nth-child(7){animation-delay:.26s;}
+  .card:nth-child(8){animation-delay:.30s;}
+  .card:nth-child(9){animation-delay:.34s;}
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+
+  .card .icon-wrap{
+    width:64px;height:64px;flex-shrink:0;border-radius:14px;display:flex;align-items:center;justify-content:center;
+    background:var(--line);color:var(--ink);
+  }
+  .card .icon-wrap svg{width:30px;height:30px;}
+
+  .card .body{flex:1 1 0%;min-width:0;overflow:hidden;}
+
+  .badge{
+    display:inline-block;font-size:.64rem;font-weight:700;letter-spacing:.09em;
+    padding:4px 10px;border-radius:999px;margin-bottom:8px;
+  }
+  .badge.ml{background:var(--yellow);color:var(--ink);}
+  .badge.dl{background:var(--dl-bg);color:#4b5563;}
+  .badge.general{background:var(--ink);color:#ffffff;}
+
+  .underline{display:block;width:22px;height:3px;background:var(--yellow);border-radius:2px;margin-bottom:8px;}
+
+  .card h3{margin:0 0 4px;font-size:1.05rem;font-weight:800;line-height:1.25;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .card .desc{margin:0;font-size:.85rem;color:var(--gray);line-height:1.45;}
+
+  .arrow-btn{
+    flex-shrink:0;width:42px;height:42px;border-radius:50%;background:var(--ink);color:#fff;
+    display:flex;align-items:center;justify-content:center;text-decoration:none;
+    transition:transform .2s ease,background .2s ease;
+  }
+  .arrow-btn svg{width:17px;height:17px;}
+
+  @media (max-width:980px){ .grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:620px){
+    .grid{grid-template-columns:1fr;}
+    .top-row{flex-direction:column;align-items:flex-start;gap:16px;}
+    .card{flex-wrap:wrap;}
+    .resumen{flex-direction:column;align-items:flex-start;}
+  }
+  @media (prefers-reduced-motion:reduce){ .card,.resumen{animation:none !important;opacity:1;transform:none;} .card:hover{transform:none;} }
+</style>
+</head>
+<body>
+  <div class="deco deco-tr-ring"></div>
+  <div class="deco deco-tr-fill"></div>
+  <div class="deco deco-bl-fill"></div>
+  <div class="deco deco-bl-ring"></div>
+  <div class="dots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+
+  <main>
+    <div class="top-row">
+      <div class="eyebrow"><span class="dash"></span><span>BACKTESTING Y EVALUACIÓN</span></div>
+      <a class="back-link" href="../modelos.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        VOLVER
+      </a>
+    </div>
+
+    <h1>Backtesting <span class="accent">GRU</span></h1>
+    <p class="lead">Resultados interactivos del backtesting del modelo GRU para la predicción de exportaciones peruanas.</p>
+
+    <div class="resumen">
+      <div class="resumen-texto">
+        <span class="badge general">DEEP LEARNING</span>
+        <p><b>Periodo:</b> 2021-2025</p>
+        <p><b>Targets:</b> FOB y Peso Neto</p>
+        <p><b>Sectores:</b> Tradicional y No Tradicional</p>
+      </div>
+      <a class="boton-carrusel" href="visor.html?i=0">
+        Ver galería completa
+      </a>
+    </div>
+<h2>1. Gráficos mensuales</h2>
+<div class="grid">
+
+<a class="card" href="01_mensual/mensual_fob_tradicional_2021.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB Tradicional 2021</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_fob_tradicional_2022.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB Tradicional 2022</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_fob_tradicional_2023.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB Tradicional 2023</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_fob_tradicional_2024.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB Tradicional 2024</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_fob_tradicional_2025.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB Tradicional 2025</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_fob_no_tradicional_2021.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB No Tradicional 2021</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_fob_no_tradicional_2022.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB No Tradicional 2022</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_fob_no_tradicional_2023.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB No Tradicional 2023</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_fob_no_tradicional_2024.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB No Tradicional 2024</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_fob_no_tradicional_2025.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB No Tradicional 2025</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_pesoneto_tradicional_2021.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto Tradicional 2021</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_pesoneto_tradicional_2022.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto Tradicional 2022</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_pesoneto_tradicional_2023.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto Tradicional 2023</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_pesoneto_tradicional_2024.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto Tradicional 2024</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_pesoneto_tradicional_2025.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto Tradicional 2025</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_pesoneto_no_tradicional_2021.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto No Tradicional 2021</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_pesoneto_no_tradicional_2022.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto No Tradicional 2022</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_pesoneto_no_tradicional_2023.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto No Tradicional 2023</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_pesoneto_no_tradicional_2024.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto No Tradicional 2024</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="01_mensual/mensual_pesoneto_no_tradicional_2025.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto No Tradicional 2025</h3>
+    <p class="desc">Gráfico mensual interactivo</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+</div>
+<h2>2. Gráficos anuales apilados</h2>
+<div class="grid">
+
+<a class="card" href="02_anual_apilado_fob.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB Real vs Predicho por año</h3>
+    <p class="desc">Barras apiladas por año</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="02_anual_apilado_pesoneto.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto Real vs Predicho por año</h3>
+    <p class="desc">Barras apiladas por año</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+</div>
+<h2>3. Top 5 países</h2>
+<div class="grid">
+
+<a class="card" href="03_top5/top5_pais_fob_tradicional_2021.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB Tradicional Top 5 países 2021</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_fob_tradicional_2022.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB Tradicional Top 5 países 2022</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_fob_tradicional_2023.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB Tradicional Top 5 países 2023</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_fob_tradicional_2024.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB Tradicional Top 5 países 2024</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_fob_tradicional_2025.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB Tradicional Top 5 países 2025</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_fob_no_tradicional_2021.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB No Tradicional Top 5 países 2021</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_fob_no_tradicional_2022.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB No Tradicional Top 5 países 2022</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_fob_no_tradicional_2023.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB No Tradicional Top 5 países 2023</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_fob_no_tradicional_2024.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB No Tradicional Top 5 países 2024</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_fob_no_tradicional_2025.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB No Tradicional Top 5 países 2025</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_pesoneto_tradicional_2021.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto Tradicional Top 5 países 2021</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_pesoneto_tradicional_2022.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto Tradicional Top 5 países 2022</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_pesoneto_tradicional_2023.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto Tradicional Top 5 países 2023</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_pesoneto_tradicional_2024.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto Tradicional Top 5 países 2024</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_pesoneto_tradicional_2025.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto Tradicional Top 5 países 2025</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_pesoneto_no_tradicional_2021.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto No Tradicional Top 5 países 2021</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_pesoneto_no_tradicional_2022.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto No Tradicional Top 5 países 2022</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_pesoneto_no_tradicional_2023.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto No Tradicional Top 5 países 2023</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_pesoneto_no_tradicional_2024.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto No Tradicional Top 5 países 2024</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_pais_pesoneto_no_tradicional_2025.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto No Tradicional Top 5 países 2025</h3>
+    <p class="desc">Comparación Top 5 países</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+</div>
+<h2>4. Top 5 departamentos</h2>
+<div class="grid">
+
+<a class="card" href="03_top5/top5_departamento_fob_tradicional_2021.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB Tradicional Top 5 departamentos 2021</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_fob_tradicional_2022.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB Tradicional Top 5 departamentos 2022</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_fob_tradicional_2023.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB Tradicional Top 5 departamentos 2023</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_fob_tradicional_2024.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB Tradicional Top 5 departamentos 2024</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_fob_tradicional_2025.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB Tradicional Top 5 departamentos 2025</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_fob_no_tradicional_2021.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB No Tradicional Top 5 departamentos 2021</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_fob_no_tradicional_2022.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB No Tradicional Top 5 departamentos 2022</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_fob_no_tradicional_2023.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB No Tradicional Top 5 departamentos 2023</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_fob_no_tradicional_2024.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB No Tradicional Top 5 departamentos 2024</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_fob_no_tradicional_2025.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB No Tradicional Top 5 departamentos 2025</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_pesoneto_tradicional_2021.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto Tradicional Top 5 departamentos 2021</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_pesoneto_tradicional_2022.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto Tradicional Top 5 departamentos 2022</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_pesoneto_tradicional_2023.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto Tradicional Top 5 departamentos 2023</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_pesoneto_tradicional_2024.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto Tradicional Top 5 departamentos 2024</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_pesoneto_tradicional_2025.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto Tradicional Top 5 departamentos 2025</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_pesoneto_no_tradicional_2021.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto No Tradicional Top 5 departamentos 2021</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_pesoneto_no_tradicional_2022.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto No Tradicional Top 5 departamentos 2022</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_pesoneto_no_tradicional_2023.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto No Tradicional Top 5 departamentos 2023</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_pesoneto_no_tradicional_2024.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto No Tradicional Top 5 departamentos 2024</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="03_top5/top5_departamento_pesoneto_no_tradicional_2025.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto No Tradicional Top 5 departamentos 2025</h3>
+    <p class="desc">Comparación Top 5 departamentos</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+</div>
+<h2>5. Gráficos anuales finales</h2>
+<div class="grid">
+
+<a class="card" href="05_anual_final_fob.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>FOB Total anual (Tradicional + No Tradicional) 2021-2025</h3>
+    <p class="desc">Serie anual consolidada</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+
+<a class="card" href="05_anual_final_pesoneto.html">
+  <div class="icon-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 17 9 11 13 15 21 5"></polyline>
+  <polyline points="14 5 21 5 21 12"></polyline>
+</svg>
+</div>
+  <div class="body">
+    <span class="badge dl">DEEP LEARNING</span>
+    <span class="underline"></span>
+    <h3>PesoNeto Total anual (Tradicional + No Tradicional) 2021-2025</h3>
+    <p class="desc">Serie anual consolidada</p>
+  </div>
+  <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span>
+</a>
+</div>
+
+  </main>
+</body>
+</html>
